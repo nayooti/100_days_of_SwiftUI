@@ -1,0 +1,24 @@
+# XCode 16
+.DS_Store
+
+## User settings
+xcuserdata/
+*.xcuserstate
+
+## App packaging
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+# Swift Package Manager
+Packages/
+Package.pins
+Package.resolved
+*.xcodeproj
+.swiftpm
+.build/
+
+# Temporäre Dateien
+*.swp
+DerivedData/
+.idea/
