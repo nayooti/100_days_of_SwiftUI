@@ -2,13 +2,19 @@ import SwiftUI
 
 struct ContentView: View {
 
-    @State var moneySpent = 0.0
+    @State var totalMoneySpent = 0.0
     @State var peopleCount = 0
+    var tipValue: Double {
+        totalMoneySpent * (100 + Double(tipPercentage)) / 100
+    }
+
     @State var tipPercentage = 20
+
+    @FocusState var moneySpentFocused
+
     var tipPercentages = [5, 10, 20, 0]
     var result: Double {
-        let spentWithTip = moneySpent / 100 * (100 + Double(tipPercentage))
-        let spentByPerson = spentWithTip / Double(peopleCount + 2)
+        let spentByPerson = tipValue / Double(peopleCount + 2)
         return spentByPerson
     }
 
@@ -18,9 +24,11 @@ struct ContentView: View {
                 Section("How much did you spend?") {
                     TextField(
                         "Amount",
-                        value: $moneySpent,
+                        value: $totalMoneySpent,
                         format: .currency(code: Locale.current.currency?.identifier ?? "USD")
-                    ).keyboardType(.decimalPad)
+                    )
+                    .focused($moneySpentFocused)
+                    .keyboardType(.decimalPad)
                 }
                 Section {
                     Picker("People", selection: $peopleCount) {
@@ -37,15 +45,30 @@ struct ContentView: View {
                         ForEach(tipPercentages, id: \.self) {
                             Text($0, format: .percent)
                         }
-                    }.pickerStyle(.segmented)
+                    }.pickerStyle(.navigationLink)
                 }
-                Section("Split per person") {
+                Section("Amount with Tip") {
+                    Text(
+                        tipValue,
+                        format: .currency(code: Locale.current.currency?.identifier ?? "USD")
+                    )
+                }
+
+                Section("Amount per person") {
                     Text(
                         result,
                         format: .currency(code: Locale.current.currency?.identifier ?? "USD")
                     )
                 }
-            }.navigationTitle("SplitMe")
+            }
+            .toolbar {
+                if moneySpentFocused {
+                    Button("Done") {
+                        moneySpentFocused = false
+                    }
+                }
+            }
+            .navigationTitle("SplitMe")
         }
     }
 }
